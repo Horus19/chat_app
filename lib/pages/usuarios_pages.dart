@@ -18,52 +18,8 @@ class _UsuariosPageState extends State<UsuariosPage> {
         online: true,
         email: "camacho19992012@gmail.com",
         nombre: "Horacio",
-        uid: "1"),
-    Usuario(
-        online: false,
-        email: "correo@correo.com",
-        nombre: "Fernando",
-        uid: "2"),
-    Usuario(
-        online: true,
-        email: "camacho19992012@gmail.com",
-        nombre: "Horacio",
-        uid: "1"),
-    Usuario(
-        online: false,
-        email: "correo@correo.com",
-        nombre: "Fernando",
-        uid: "2"),
-    Usuario(
-        online: true,
-        email: "camacho19992012@gmail.com",
-        nombre: "Horacio",
-        uid: "1"),
-    Usuario(
-        online: false,
-        email: "correo@correo.com",
-        nombre: "Fernando",
-        uid: "2"),
-    Usuario(
-        online: true,
-        email: "camacho19992012@gmail.com",
-        nombre: "Horacio",
-        uid: "1"),
-    Usuario(
-        online: false,
-        email: "correo@correo.com",
-        nombre: "Fernando",
-        uid: "2"),
-    Usuario(
-        online: true,
-        email: "camacho19992012@gmail.com",
-        nombre: "Horacio",
-        uid: "1"),
-    Usuario(
-        online: false,
-        email: "correo@correo.com",
-        nombre: "Fernando",
-        uid: "2"),
+        id: "1",
+        token: "123"),
   ];
 
   @override
