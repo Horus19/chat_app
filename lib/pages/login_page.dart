@@ -192,7 +192,7 @@ class __FormState extends State<_Form> {
                         ),
                       );
                     } else {
-                      Navigator.pushReplacementNamed(context, 'Chat');
+                      Navigator.pushReplacementNamed(context, 'Usuarios');
                     }
                   }
                 },

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../services/auth_service.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
@@ -71,6 +74,7 @@ class __FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     return Container(
       margin: const EdgeInsets.only(top: 0, left: 30, right: 30),
       child: Form(
@@ -209,16 +213,34 @@ class __FormState extends State<_Form> {
               height:
                   50.0, // Esto hace que el botón tenga una altura fija de 50 pixeles
               child: MaterialButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
+                    if (authService.autenticando) return;
+                    FocusScope.of(context).unfocus();
                     // Si el formulario es válido, mostrar un snackbar
-                    //TODO: Crear un servicio para manejar el login
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text("Verifica tus datos e intenta de nuevo"),
-                        backgroundColor: Colors.red,
+                        content: Text("Registrando..."),
+                        backgroundColor: Colors.blue,
                       ),
                     );
+
+                    final register = await authService.register(
+                        nameCtrl.text.trim(),
+                        emailCtrl.text.trim(),
+                        passCtrl.text.trim(),
+                        pass2Ctrl.text.trim());
+
+                    if (register.message != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(register.message!),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    } else {
+                      Navigator.pushReplacementNamed(context, 'welcome');
+                    } // Si el formulario es válido, mostrar un snackbar
                   }
                 },
                 color: Color.fromARGB(255, 12, 112, 170),

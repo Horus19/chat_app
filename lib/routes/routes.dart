@@ -5,6 +5,7 @@ import '../pages/loading_page.dart';
 import '../pages/login_page.dart';
 import '../pages/register_page.dart';
 import '../pages/reset_password.dart';
+import '../pages/successful_registration_page.dart';
 import '../pages/usuarios_pages.dart';
 
 final Map<String, WidgetBuilder> appRoutes = {
@@ -14,4 +15,5 @@ final Map<String, WidgetBuilder> appRoutes = {
   'Register': (_) => const RegisterPage(),
   "LoadingPage": (_) => const LoadingPage(),
   "ResetPassword": (_) => const ResetPasswordScreen(),
+  "welcome": (_) => const SuccessfulRegistrationPage(),
 };
