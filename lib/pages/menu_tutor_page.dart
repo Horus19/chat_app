@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../services/auth_service.dart';
+
 class TutorMenuPage extends StatelessWidget {
   const TutorMenuPage({Key? key}) : super(key: key);
 
@@ -61,6 +63,8 @@ class TutorMenuPage extends StatelessWidget {
             'Salir',
             Icons.exit_to_app,
             () {
+              AuthService.deleteToken();
+              Navigator.pushReplacementNamed(context, 'Login');
               // Lógica para la opción "Salir"
             },
           ),

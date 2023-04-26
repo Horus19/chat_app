@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../services/auth_service.dart';
+
 class StudentMenuPage extends StatelessWidget {
   const StudentMenuPage({Key? key}) : super(key: key);
 
@@ -21,6 +23,7 @@ class StudentMenuPage extends StatelessWidget {
             'Buscar tutor',
             Icons.search,
             () {
+              Navigator.pushReplacementNamed(context, 'TutorSearchScreen');
               // Lógica para la opción "Buscar tutor"
             },
           ),
@@ -53,6 +56,8 @@ class StudentMenuPage extends StatelessWidget {
             'Salir',
             Icons.exit_to_app,
             () {
+              AuthService.deleteToken();
+              Navigator.pushReplacementNamed(context, 'Login');
               // Lógica para la opción "Salir"
             },
           ),

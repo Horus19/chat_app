@@ -1,6 +1,7 @@
 import 'package:chat_app/pages/chat_page.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../pages/buscar_tutor_page.dart';
 import '../pages/loading_page.dart';
 import '../pages/login_page.dart';
 import '../pages/menu_estudiante_page.dart';
@@ -22,4 +23,5 @@ final Map<String, WidgetBuilder> appRoutes = {
   "RolSelectionPage": (_) => const RolSelectionPage(),
   "StudentMenuPage": (_) => const StudentMenuPage(),
   "TutorMenuPage": (_) => const TutorMenuPage(),
+  "TutorSearchScreen": (_) => const TutorSearchScreen(),
 };
