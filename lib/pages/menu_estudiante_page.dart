@@ -40,6 +40,8 @@ class StudentMenuPage extends StatelessWidget {
             'Historial de tutorías',
             Icons.history,
             () {
+              Navigator.pushReplacementNamed(
+                  context, 'HistorialTutoriasScreen');
               // Lógica para la opción "Historial de tutorías"
             },
           ),
@@ -48,6 +50,8 @@ class StudentMenuPage extends StatelessWidget {
             'Activar perfil de tutor',
             Icons.person_add,
             () {
+              Navigator.pushReplacementNamed(
+                  context, 'ActivateTutorProfileScreen');
               // Lógica para la opción "Activar perfil de tutor"
             },
           ),
