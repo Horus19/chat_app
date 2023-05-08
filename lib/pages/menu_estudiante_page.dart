@@ -1,9 +1,28 @@
+import 'package:chat_app/models/usuario.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../services/auth_service.dart';
 
-class StudentMenuPage extends StatelessWidget {
+class StudentMenuPage extends StatefulWidget {
   const StudentMenuPage({Key? key}) : super(key: key);
+
+  @override
+  State<StudentMenuPage> createState() => _StudentMenuPageState();
+}
+
+class _StudentMenuPageState extends State<StudentMenuPage> {
+  late bool _isTutor = false;
+
+  @override
+  void initState() {
+    super.initState();
+    AuthService.getUsuario().then((Usuario? usuario) {
+      setState(() {
+        _isTutor = usuario!.roles.contains('tutor');
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +48,14 @@ class StudentMenuPage extends StatelessWidget {
           ),
           _buildMenuItem(
             context,
+            'Solicitudes de tutorías',
+            Icons.pending,
+            () {
+              // Lógica para la opción "Solicitudes de tutorías"
+            },
+          ),
+          _buildMenuItem(
+            context,
             'Tutorías activas',
             Icons.pending_actions,
             () {
@@ -47,12 +74,15 @@ class StudentMenuPage extends StatelessWidget {
           ),
           _buildMenuItem(
             context,
-            'Activar perfil de tutor',
-            Icons.person_add,
+            _isTutor ? "Ir a perfil de tutor" : 'Activar perfil de tutor',
+            _isTutor ? Icons.person : Icons.person_add,
             () {
-              Navigator.pushReplacementNamed(
-                  context, 'ActivateTutorProfileScreen');
-              // Lógica para la opción "Activar perfil de tutor"
+              if (_isTutor) {
+                Navigator.pushReplacementNamed(context, 'TutorMenuPage');
+              } else {
+                Navigator.pushReplacementNamed(
+                    context, 'ActivateTutorProfileScreen');
+              }
             },
           ),
           _buildMenuItem(

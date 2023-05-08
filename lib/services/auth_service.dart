@@ -4,7 +4,6 @@ import 'package:chat_app/environment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 
 import '../models/login_response.dart';
 import '../models/register_response.dart';
@@ -36,6 +35,32 @@ class AuthService with ChangeNotifier {
     await storage.delete(key: 'token');
   }
 
+  static Future<void> deleteUsuario() async {
+    const storage = FlutterSecureStorage();
+    await storage.delete(key: 'usuario');
+  }
+
+  /// Metodo para obtener el usuario
+  static Future<Usuario?> getUsuario() async {
+    const storage = FlutterSecureStorage();
+    final usuario = await storage.read(key: 'usuario');
+    if (usuario != null) {
+      return Usuario.fromJson(jsonDecode(usuario));
+    }
+    return null;
+  }
+
+  /// Metodo estatico para agregar el rol de tutor al usuario
+  static Future<void> setTutorRol() async {
+    const storage = FlutterSecureStorage();
+    final usuario = await storage.read(key: 'usuario');
+    if (usuario != null) {
+      final user = Usuario.fromJson(jsonDecode(usuario));
+      user.roles.add('tutor');
+      await storage.write(key: 'usuario', value: jsonEncode(user.toJson()));
+    }
+  }
+
   /// This is a method that will be used to login a user.
   /// [email] is the email of the user.
   /// [password] is the password of the user.
@@ -45,19 +70,20 @@ class AuthService with ChangeNotifier {
     final data = {'email': email, 'password': password};
     try {
       final resp = await http.post(
-        Uri.parse('${Environment.baseUrl}/auth/login'),
+        Uri.parse('${Environment.authBack}/login'),
         body: jsonEncode(data),
         headers: {'Content-Type': 'application/json'},
       );
       final loginResponse = loginResponseFromJson(resp.body);
       if (loginResponse.ok) {
-        //TODO: agregar el nombre del usuario en el backend
         usuario = Usuario(
             id: loginResponse.id!,
             email: loginResponse.email!,
             nombre: loginResponse.email!,
             online: true,
-            token: loginResponse.token!);
+            token: loginResponse.token!,
+            roles: loginResponse.roles!);
+        _storage.write(key: 'usuario', value: jsonEncode(usuario.toJson()));
         await _guardarToken(loginResponse.token!);
       }
       autenticando = false;
@@ -74,15 +100,13 @@ class AuthService with ChangeNotifier {
   /// [nombre] is the name of the user.
   /// [email] is the email of the user.
   /// [password] is the password of the user.
-  /// [password2] is the password confirmation of the user.
   Future<RegisterResponse> register(
-      String nombre, String email, String password, String password2) async {
+      String nombre, String email, String password) async {
     autenticando = true;
-    //TODO: implementar envio de confirmacion de contraseña en el backend
     final data = {'fullName': nombre, 'email': email, 'password': password};
     try {
       final resp = await http.post(
-        Uri.parse('${Environment.baseUrl}/auth/register'),
+        Uri.parse('${Environment.authBack}/register'),
         body: jsonEncode(data),
         headers: {'Content-Type': 'application/json'},
       );
@@ -104,7 +128,7 @@ class AuthService with ChangeNotifier {
       return false;
     }
     final resp = await http.get(
-      Uri.parse('${Environment.baseUrl}/auth/check-auth-status'),
+      Uri.parse('${Environment.authBack}/check-auth-status'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token'
@@ -122,7 +146,9 @@ class AuthService with ChangeNotifier {
     return await _storage.write(key: 'token', value: token);
   }
 
+  /// This is a method that will be used to logout a user.
   Future logout() async {
+    await _storage.delete(key: 'usuario');
     return await _storage.delete(key: 'token');
   }
 }

@@ -12,6 +12,7 @@ class LoginResponse {
     this.email,
     this.isActivate,
     this.token,
+    this.roles,
     this.message,
   });
 
@@ -19,6 +20,7 @@ class LoginResponse {
   String? id;
   String? email;
   bool? isActivate;
+  List<String>? roles;
   String? token;
   String? message;
 
@@ -28,6 +30,9 @@ class LoginResponse {
         email: json["email"],
         isActivate: json["isActivate"],
         token: json["token"],
+        roles: json["roles"] == null
+            ? []
+            : List<String>.from(json["roles"]!.map((x) => x)),
         message: json["message"],
       );
 
@@ -37,6 +42,7 @@ class LoginResponse {
         "email": email,
         "isActivate": isActivate,
         "token": token,
+        "roles": roles == null ? [] : List<dynamic>.from(roles!.map((x) => x)),
         "message": message,
       };
 }

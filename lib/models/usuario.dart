@@ -15,6 +15,7 @@ class Usuario {
     required this.token,
     required this.online,
     required this.nombre,
+    required this.roles,
   });
 
   String id;
@@ -22,6 +23,7 @@ class Usuario {
   String token;
   bool online;
   String nombre;
+  List<String> roles = [];
 
   factory Usuario.fromJson(Map<String, dynamic> json) => Usuario(
         id: json["id"],
@@ -29,6 +31,9 @@ class Usuario {
         token: json["token"],
         online: json["online"],
         nombre: json["nombre"],
+        roles: json["roles"] == null
+            ? []
+            : List<String>.from(json["roles"].map((x) => x)),
       );
 
   Map<String, dynamic> toJson() => {
@@ -37,5 +42,6 @@ class Usuario {
         "token": token,
         "online": online,
         "nombre": nombre,
+        "roles": List<dynamic>.from(roles.map((x) => x)),
       };
 }

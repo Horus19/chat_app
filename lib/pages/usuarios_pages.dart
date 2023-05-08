@@ -20,7 +20,8 @@ class _UsuariosPageState extends State<UsuariosPage> {
         email: "camacho19992012@gmail.com",
         nombre: "Horacio",
         id: "1",
-        token: "123"),
+        token: "123",
+        roles: ['TUTOR_ROLE']),
   ];
 
   @override
@@ -40,6 +41,7 @@ class _UsuariosPageState extends State<UsuariosPage> {
             onPressed: () => {
               //TODO: Desconectar del socket server
               AuthService.deleteToken(),
+              AuthService.deleteUsuario(),
               Navigator.pushReplacementNamed(context, 'Login')
             },
           ),

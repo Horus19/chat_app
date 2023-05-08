@@ -23,8 +23,13 @@ class LoadingPage extends StatelessWidget {
     final AuthService authService =
         Provider.of<AuthService>(context, listen: false);
     final autenticado = await authService.isLoggedIn();
+    final usuario = await AuthService.getUsuario();
     if (autenticado) {
-      Navigator.pushReplacementNamed(context, 'Usuarios');
+      if (usuario != null && usuario.roles.contains('tutor')) {
+        print('ROl seleccionado');
+        Navigator.pushReplacementNamed(context, 'RolSelectionPage');
+      } else
+        Navigator.pushReplacementNamed(context, 'StudentMenuPage');
     } else {
       Navigator.pushReplacementNamed(context, 'Login');
     }

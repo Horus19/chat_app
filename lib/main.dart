@@ -1,9 +1,17 @@
 import 'package:chat_app/routes/routes.dart';
 import 'package:chat_app/services/auth_service.dart';
+import 'package:chat_app/services/materia_service.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+  // Initialize the locale data for 'es'
+  await initializeDateFormatting('es');
+
+  // Run your app
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -13,10 +21,11 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthService()),
+        ChangeNotifierProvider(create: (_) => MateriaService()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Material App',
+        title: 'TUTUIS App',
         initialRoute: 'LoadingPage',
         routes: appRoutes,
       ),

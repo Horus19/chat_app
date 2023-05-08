@@ -228,10 +228,10 @@ class __FormState extends State<_Form> {
                     final register = await authService.register(
                         nameCtrl.text.trim(),
                         emailCtrl.text.trim(),
-                        passCtrl.text.trim(),
-                        pass2Ctrl.text.trim());
+                        passCtrl.text.trim());
 
                     if (register.message != null) {
+                      // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(register.message!),
@@ -239,11 +239,12 @@ class __FormState extends State<_Form> {
                         ),
                       );
                     } else {
+                      // ignore: use_build_context_synchronously
                       Navigator.pushReplacementNamed(context, 'welcome');
                     } // Si el formulario es válido, mostrar un snackbar
                   }
                 },
-                color: Color.fromARGB(255, 12, 112, 170),
+                color: const Color.fromARGB(255, 12, 112, 170),
                 shape: const StadiumBorder(),
                 child: const Text(
                   "Registrarse",

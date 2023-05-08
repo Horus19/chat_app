@@ -55,7 +55,7 @@ class TutorMenuPage extends StatelessWidget {
             'Ir a perfil de estudiante',
             Icons.person_pin,
             () {
-              // Lógica para la opción "Ir a perfil de estudiante"
+              Navigator.pushReplacementNamed(context, 'StudentMenuPage');
             },
           ),
           _buildMenuItem(

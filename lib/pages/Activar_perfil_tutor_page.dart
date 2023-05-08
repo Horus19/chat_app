@@ -1,4 +1,12 @@
+import 'package:chat_app/models/CrearPerfilTutorDto.dart';
+import 'package:chat_app/models/usuario.dart';
+import 'package:chat_app/services/materia_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../models/materia.dart';
+import '../services/auth_service.dart';
+import '../services/tutor_service.dart';
 
 class ActivarPerfilTutorScreen extends StatefulWidget {
   const ActivarPerfilTutorScreen({super.key});
@@ -9,16 +17,25 @@ class ActivarPerfilTutorScreen extends StatefulWidget {
 }
 
 class _ActivarPerfilTutorScreenState extends State<ActivarPerfilTutorScreen> {
+  TutorService tutorService = TutorService();
+
   String _descripcion = '';
-  final List<String> _materias = [
-    'Matemáticas',
-    'Física',
-    'Programación',
-    'Inglés',
-    'Historia'
-  ];
-  final List<String> _materiasSeleccionadas = [];
+  late List<Materia> _materias = [];
+  final List<Materia> _materiasSeleccionadas = [];
   double _tarifa = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Llamada al método getMaterias del servicio MateriaService para obtener la lista de materias disponibles
+    Provider.of<MateriaService>(context, listen: false)
+        .getMaterias()
+        .then((materias) {
+      setState(() {
+        _materias = materias;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +98,7 @@ class _ActivarPerfilTutorScreenState extends State<ActivarPerfilTutorScreen> {
                 items: _materias.map((materia) {
                   return DropdownMenuItem(
                     value: materia,
-                    child: Text(materia),
+                    child: Text(materia.codigoNombre!),
                   );
                 }).toList(),
                 onChanged: (value) {
@@ -99,7 +116,7 @@ class _ActivarPerfilTutorScreenState extends State<ActivarPerfilTutorScreen> {
                 runSpacing: 8.0,
                 children: _materiasSeleccionadas.map((materia) {
                   return Chip(
-                    label: Text(materia),
+                    label: Text(materia.codigoNombre!),
                     onDeleted: () {
                       setState(() {
                         _materiasSeleccionadas.remove(materia);
@@ -133,11 +150,28 @@ class _ActivarPerfilTutorScreenState extends State<ActivarPerfilTutorScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     child: ElevatedButton(
-                      onPressed: () {
-                        print('Descripción: $_descripcion');
-                        print('Materias: $_materiasSeleccionadas');
-                        print('Tarifa: $_tarifa');
-                        // Lógica para enviar la información al servidor y activar el perfil de tutor
+                      onPressed: () async {
+                        Usuario? usuario = await AuthService.getUsuario();
+                        CrearPerfilTutorDto crearPerfilTutorDto =
+                            CrearPerfilTutorDto(
+                          usuarioId: usuario!.id,
+                          descripcion: _descripcion,
+                          materiasIds: _materiasSeleccionadas.isNotEmpty
+                              ? _materiasSeleccionadas
+                                  .map((materia) => materia.id!)
+                                  .toList()
+                              : [],
+                          costoPorHora: _tarifa.toInt(),
+                        );
+                        tutorService
+                            .crearPerfilTutor(crearPerfilTutorDto)
+                            .then((value) {
+                          AuthService.setTutorRol();
+                          Navigator.pushReplacementNamed(
+                              context, 'TutorMenuPage');
+                        }).catchError((error) {
+                          print("error: $error");
+                        });
                       },
                       style: ElevatedButton.styleFrom(
                         primary: Colors.blue,

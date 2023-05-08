@@ -100,9 +100,9 @@ class __FormState extends State<_Form> {
                   return 'Por favor ingrese un correo';
                 }
                 // Si el valor no termina en @correo.uis.edu.co, mostrar otro mensaje de error
-                if (!value.endsWith('@correo.uis.edu.co')) {
-                  return 'El correo debe terminar en @correo.uis.edu.co';
-                }
+                // if (!value.endsWith('@correo.uis.edu.co')) {
+                //   return 'El correo debe terminar en @correo.uis.edu.co';
+                // }
                 // Si todo está bien, retornar null
                 return null;
               },
@@ -192,10 +192,13 @@ class __FormState extends State<_Form> {
                         ),
                       );
                     } else {
-                      //TODO implementar validadcion de primer ingreso y de perfil de tutor.
-
-                      Navigator.pushReplacementNamed(
-                          context, 'RolSelectionPage');
+                      if (loginOk.roles!.contains('tutor')) {
+                        Navigator.pushReplacementNamed(
+                            context, 'RolSelectionPage');
+                      } else {
+                        Navigator.pushReplacementNamed(
+                            context, 'StudentMenuPage');
+                      }
                     }
                   }
                 },

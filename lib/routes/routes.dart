@@ -1,7 +1,9 @@
 import 'package:chat_app/pages/chat_page.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../models/tutorDTO.dart';
 import '../pages/Activar_perfil_tutor_page.dart';
+import '../pages/Solicitar_tutoria_page.dart';
 import '../pages/buscar_tutor_page.dart';
 import '../pages/historial_tutorias_page.dart';
 import '../pages/loading_page.dart';
@@ -12,6 +14,7 @@ import '../pages/register_page.dart';
 import '../pages/reset_password.dart';
 import '../pages/rol_selection_page.dart';
 import '../pages/successful_registration_page.dart';
+import '../pages/tutor_detalle_page.dart';
 import '../pages/usuarios_pages.dart';
 
 final Map<String, WidgetBuilder> appRoutes = {
@@ -27,5 +30,7 @@ final Map<String, WidgetBuilder> appRoutes = {
   "TutorMenuPage": (_) => const TutorMenuPage(),
   "TutorSearchScreen": (_) => const TutorSearchScreen(),
   "HistorialTutoriasScreen": (_) => const HistorialTutoriasScreen(),
-  "ActivateTutorProfileScreen": (_) => ActivarPerfilTutorScreen(),
+  "ActivateTutorProfileScreen": (_) => const ActivarPerfilTutorScreen(),
+  "TutorDetailPage": (_) => const TutorDetailPage(),
+  "SolicitudTutoriaScreen": (_) => const SolicitudTutoriaScreen(),
 };
