@@ -1,9 +1,4 @@
-import 'package:chat_app/models/tutorDTO.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../services/auth_service.dart';
-import '../services/tutor_service.dart';
 
 class RolSelectionPage extends StatefulWidget {
   const RolSelectionPage({Key? key}) : super(key: key);
@@ -15,7 +10,6 @@ class RolSelectionPage extends StatefulWidget {
 class _RolSelectionPageState extends State<RolSelectionPage> {
   @override
   Widget build(BuildContext context) {
-    /// Se obtiene el servicio de tutor
     return Scaffold(
       appBar: AppBar(
         title: const Text('Selecciona tu rol'),
@@ -44,8 +38,7 @@ class _RolSelectionPageState extends State<RolSelectionPage> {
                       constraints:
                           const BoxConstraints(maxWidth: 200, maxHeight: 150),
                       child: ElevatedButton(
-                        onPressed: () {
-                          print("Estudiante");
+                        onPressed: () async {
                           Navigator.pushReplacementNamed(
                               context, 'StudentMenuPage');
                           // Lógica para el rol de estudiante

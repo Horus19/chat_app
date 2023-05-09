@@ -16,6 +16,7 @@ import '../pages/successful_registration_page.dart';
 import '../pages/tutor/solicitud_tutoria_details_page.dart';
 import '../pages/tutor/solicitud_tutoria_list_page.dart';
 import '../pages/tutor/tutor_profille_screen.dart';
+import '../pages/tutor/tutoria_aceptada_page.dart';
 import '../pages/tutor/tutorias_activas_list_page.dart';
 import '../pages/tutor_detalle_page.dart';
 import '../pages/usuarios_pages.dart';
@@ -40,4 +41,5 @@ final Map<String, WidgetBuilder> appRoutes = {
   "SolicitudTutoriaDetails": (_) => const SolicitudTutoriaDetails(),
   "TutoriasActivasList": (_) => const TutoriasActivasList(),
   "TutorProfileScreen": (_) => const TutorProfileScreen(),
+  "TutoriaAceptadaPage": (_) => const TutoriaAceptadaPage(),
 };

@@ -183,9 +183,11 @@ class _SolicitudTutoriaScreenState extends State<SolicitudTutoriaScreen> {
                             const SnackBar(
                               content: Text(
                                   'La solicitud de tutoría ha sido enviada'),
+                              backgroundColor: Colors.blue,
                             ),
                           );
-                          Navigator.pop(context);
+                          Navigator.pushReplacementNamed(
+                              context, "StudentMenuPage");
                         });
                       }
                     },

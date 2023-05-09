@@ -84,6 +84,7 @@ class AuthService with ChangeNotifier {
             token: loginResponse.token!,
             roles: loginResponse.roles!);
         _storage.write(key: 'usuario', value: jsonEncode(usuario.toJson()));
+        this.usuario = usuario;
         await _guardarToken(loginResponse.token!);
       }
       autenticando = false;

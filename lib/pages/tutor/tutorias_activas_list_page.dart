@@ -57,7 +57,7 @@ class _SolicitudTutoriasListState extends State<TutoriasActivasList> {
                         /// Navigate to the details page
                         Navigator.pushNamed(
                           context,
-                          'SolicitudTutoriaDetails',
+                          'TutoriaAceptadaPage',
                           arguments: solicitud,
                         );
                       },

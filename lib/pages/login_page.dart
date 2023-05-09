@@ -77,7 +77,7 @@ class __FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
-    final _tutorService = Provider.of<TutorService>(context);
+    final tutorService = Provider.of<TutorService>(context);
 
     return Container(
       margin: const EdgeInsets.only(top: 0, left: 30, right: 30),
@@ -190,6 +190,7 @@ class __FormState extends State<_Form> {
                         emailCtrl.text.trim(), passCtrl.text.trim());
 
                     if (!loginOk.ok) {
+                      // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(loginOk.message ?? "Error al ingresar"),
@@ -197,8 +198,8 @@ class __FormState extends State<_Form> {
                         ),
                       );
                     } else {
-                      _tutorService.getTutorByUserId(loginOk.id!);
                       if (loginOk.roles!.contains('tutor')) {
+                        await tutorService.getTutorByUserId(loginOk.id!);
                         // ignore: use_build_context_synchronously
                         Navigator.pushReplacementNamed(
                             context, 'RolSelectionPage');

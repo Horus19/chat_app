@@ -155,6 +155,34 @@ class TutorService with ChangeNotifier {
     }
   }
 
+  /// Metodo que edita un Tutor
+  /// [TutorDto] json con datos a editar
+
+  Future<void> update(tutor) async {
+    try {
+      final token = await AuthService.getToken();
+      final updatedTutor = {
+        'id': tutor.id,
+        'descripcion': tutor.descripcion,
+        'materias': tutor.materias,
+        'costo': tutor.costo,
+      };
+      final resp = await http.patch(Uri.parse('${Environment.coreBack}tutor'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: json.encode(updatedTutor));
+      this.tutor = tutor;
+      _storage.write(key: 'tutor', value: jsonEncode(tutor.toJson()));
+      // if (resp.statusCode != 200) {
+      //   throw http.ClientException('Error al obtener las tutorias activas');
+      // }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   /// Metodo estatico que obtiene el perfil de tutor del storage
   /// Retorna un objeto de tipo [TutorDto]
   static Future<TutorDto> getTutorFromStorage() async {

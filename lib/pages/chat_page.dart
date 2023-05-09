@@ -19,31 +19,14 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: Row(
-            children: [
-              Container(
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment:
-                      MainAxisAlignment.center, // Centrar contenido
-                  children: const [
-                    CircleAvatar(
-                      backgroundColor: Colors.blue,
-                      maxRadius: 14,
-                      child: Text('Te', style: TextStyle(fontSize: 12)),
-                    ),
-                    SizedBox(height: 3),
-                    Text(
-                      'Nombre del usuario',
-                      style: TextStyle(color: Colors.black54, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(context);
+                // Acción al presionar el botón de regreso
+              },
+            ),
+            title: const Text("Chat page")),
         body: Container(
           padding: const EdgeInsets.all(10),
           child: Column(children: [
