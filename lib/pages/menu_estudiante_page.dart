@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../services/auth_service.dart';
+import '../services/tutor_service.dart';
 
 class StudentMenuPage extends StatefulWidget {
   const StudentMenuPage({Key? key}) : super(key: key);
@@ -12,14 +13,16 @@ class StudentMenuPage extends StatefulWidget {
 }
 
 class _StudentMenuPageState extends State<StudentMenuPage> {
+  final TutorService _tutorService = TutorService();
   late bool _isTutor = false;
-
+  late Usuario _usuario;
   @override
   void initState() {
     super.initState();
     AuthService.getUsuario().then((Usuario? usuario) {
       setState(() {
-        _isTutor = usuario!.roles.contains('tutor');
+        _usuario = usuario!;
+        _isTutor = usuario.roles.contains('tutor');
       });
     });
   }
@@ -76,8 +79,9 @@ class _StudentMenuPageState extends State<StudentMenuPage> {
             context,
             _isTutor ? "Ir a perfil de tutor" : 'Activar perfil de tutor',
             _isTutor ? Icons.person : Icons.person_add,
-            () {
+            () async {
               if (_isTutor) {
+                // ignore: use_build_context_synchronously
                 Navigator.pushReplacementNamed(context, 'TutorMenuPage');
               } else {
                 Navigator.pushReplacementNamed(

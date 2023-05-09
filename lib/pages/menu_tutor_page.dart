@@ -1,12 +1,23 @@
+import 'package:chat_app/models/tutorDTO.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../services/auth_service.dart';
+import '../services/tutor_service.dart';
 
-class TutorMenuPage extends StatelessWidget {
+class TutorMenuPage extends StatefulWidget {
   const TutorMenuPage({Key? key}) : super(key: key);
 
   @override
+  State<TutorMenuPage> createState() => _TutorMenuPageState();
+}
+
+class _TutorMenuPageState extends State<TutorMenuPage> {
+  @override
   Widget build(BuildContext context) {
+    /// Inicializar el servicio de tutor
+    final _tutorService = Provider.of<TutorService>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Menú tutor'),
@@ -24,6 +35,17 @@ class TutorMenuPage extends StatelessWidget {
             Icons.manage_accounts,
             () {
               // Lógica para la opción "Gestionar perfil"
+              Navigator.pushReplacementNamed(context, 'TutorProfileScreen',
+                  arguments: _tutorService.tutor);
+            },
+          ),
+          _buildMenuItem(
+            context,
+            'Solicitudes de tutorías',
+            Icons.pending,
+            () {
+              Navigator.pushReplacementNamed(context, 'SolicitudTutoriasList',
+                  arguments: _tutorService.tutor.id);
             },
           ),
           _buildMenuItem(
@@ -32,6 +54,8 @@ class TutorMenuPage extends StatelessWidget {
             Icons.pending_actions,
             () {
               // Lógica para la opción "Tutorías activas"
+              Navigator.pushReplacementNamed(context, 'TutoriasActivasList',
+                  arguments: _tutorService.tutor.id);
             },
           ),
           _buildMenuItem(
@@ -40,14 +64,6 @@ class TutorMenuPage extends StatelessWidget {
             Icons.history,
             () {
               // Lógica para la opción "Historial de tutorías"
-            },
-          ),
-          _buildMenuItem(
-            context,
-            'Solicitudes de tutorías',
-            Icons.pending,
-            () {
-              // Lógica para la opción "Solicitudes de tutorías"
             },
           ),
           _buildMenuItem(

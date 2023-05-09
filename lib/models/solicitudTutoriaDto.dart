@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final solicitudTutoriaDto = solicitudTutoriaDtoFromJson(jsonString);
-
 import 'dart:convert';
 
 class SolicitudTutoriaDto {

@@ -2,6 +2,8 @@ import 'package:chat_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../services/tutor_service.dart';
+
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
@@ -75,6 +77,8 @@ class __FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
+    final _tutorService = Provider.of<TutorService>(context);
+
     return Container(
       margin: const EdgeInsets.only(top: 0, left: 30, right: 30),
       child: Form(
@@ -156,7 +160,7 @@ class __FormState extends State<_Form> {
                       Navigator.pushNamed(context, 'ResetPassword');
                       //Navigator.pushNamed(context, '/forgot-password');
                     },
-                    child: Text('Olvidé mi contraseña'),
+                    child: const Text('Olvidé mi contraseña'),
                   ),
                 ),
               ],
@@ -184,6 +188,7 @@ class __FormState extends State<_Form> {
 
                     final loginOk = await authService.login(
                         emailCtrl.text.trim(), passCtrl.text.trim());
+
                     if (!loginOk.ok) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -192,10 +197,13 @@ class __FormState extends State<_Form> {
                         ),
                       );
                     } else {
+                      _tutorService.getTutorByUserId(loginOk.id!);
                       if (loginOk.roles!.contains('tutor')) {
+                        // ignore: use_build_context_synchronously
                         Navigator.pushReplacementNamed(
                             context, 'RolSelectionPage');
                       } else {
+                        // ignore: use_build_context_synchronously
                         Navigator.pushReplacementNamed(
                             context, 'StudentMenuPage');
                       }

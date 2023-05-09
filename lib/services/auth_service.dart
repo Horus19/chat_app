@@ -142,6 +142,7 @@ class AuthService with ChangeNotifier {
     return false;
   }
 
+  /// This is a method that will be used to save the token.
   Future _guardarToken(String token) async {
     return await _storage.write(key: 'token', value: token);
   }

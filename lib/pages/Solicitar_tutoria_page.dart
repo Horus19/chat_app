@@ -15,12 +15,13 @@ class SolicitudTutoriaScreen extends StatefulWidget {
 }
 
 class _SolicitudTutoriaScreenState extends State<SolicitudTutoriaScreen> {
-  TutorDto get tutor => ModalRoute.of(context)!.settings.arguments as TutorDto;
   final _formKey = GlobalKey<FormState>();
 
   final SolicitudTutoriaDto _solicitudTutoriaDto = SolicitudTutoriaDto();
 
   final EstudianteService _estudianteService = EstudianteService();
+
+  TutorDto get tutor => ModalRoute.of(context)!.settings.arguments as TutorDto;
 
   @override
   void initState() {
