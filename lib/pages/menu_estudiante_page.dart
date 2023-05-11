@@ -55,6 +55,9 @@ class _StudentMenuPageState extends State<StudentMenuPage> {
             Icons.pending,
             () {
               // Lógica para la opción "Solicitudes de tutorías"
+              Navigator.pushReplacementNamed(
+                  context, 'SolicitudTutoriasListStudent',
+                  arguments: _usuario.id);
             },
           ),
           _buildMenuItem(
@@ -63,6 +66,9 @@ class _StudentMenuPageState extends State<StudentMenuPage> {
             Icons.pending_actions,
             () {
               // Lógica para la opción "Tutorías activas"
+              Navigator.pushReplacementNamed(
+                  context, 'TutoriasActivasEstudiante',
+                  arguments: _usuario.id);
             },
           ),
           _buildMenuItem(
@@ -70,9 +76,10 @@ class _StudentMenuPageState extends State<StudentMenuPage> {
             'Historial de tutorías',
             Icons.history,
             () {
-              Navigator.pushReplacementNamed(
-                  context, 'HistorialTutoriasScreen');
               // Lógica para la opción "Historial de tutorías"
+              Navigator.pushReplacementNamed(
+                  context, 'TutoriasFinalizadasEstudiante',
+                  arguments: _usuario.id);
             },
           ),
           _buildMenuItem(

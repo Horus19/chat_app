@@ -4,6 +4,9 @@ import 'package:flutter/cupertino.dart';
 import '../pages/Activar_perfil_tutor_page.dart';
 import '../pages/Solicitar_tutoria_page.dart';
 import '../pages/buscar_tutor_page.dart';
+import '../pages/estudiante/SolicitudTutoriasListStudent.dart';
+import '../pages/estudiante/Tutorias_activas_estudiante.dart';
+import '../pages/estudiante/tutorias_finalizadas_estudiante_page.dart';
 import '../pages/historial_tutorias_page.dart';
 import '../pages/loading_page.dart';
 import '../pages/login_page.dart';
@@ -18,6 +21,7 @@ import '../pages/tutor/solicitud_tutoria_list_page.dart';
 import '../pages/tutor/tutor_profille_screen.dart';
 import '../pages/tutor/tutoria_aceptada_page.dart';
 import '../pages/tutor/tutorias_activas_list_page.dart';
+import '../pages/tutor/tutorias_finalizadas_page.dart';
 import '../pages/tutor_detalle_page.dart';
 import '../pages/usuarios_pages.dart';
 
@@ -42,4 +46,8 @@ final Map<String, WidgetBuilder> appRoutes = {
   "TutoriasActivasList": (_) => const TutoriasActivasList(),
   "TutorProfileScreen": (_) => const TutorProfileScreen(),
   "TutoriaAceptadaPage": (_) => const TutoriaAceptadaPage(),
+  "SolicitudTutoriasListStudent": (_) => const SolicitudTutoriasListStudent(),
+  "TutoriasActivasEstudiante": (_) => const TutoriasActivasEstudiante(),
+  "TutoriasFinalizadasList": (_) => const TutoriasFinalizadasList(),
+  "TutoriasFinalizadasEstudiante": (_) => const TutoriasFinalizadasEstudiante(),
 };

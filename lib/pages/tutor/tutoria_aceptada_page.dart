@@ -12,8 +12,28 @@ class TutoriaAceptadaPage extends StatefulWidget {
 }
 
 class _TutoriaAceptadaPageState extends State<TutoriaAceptadaPage> {
-  tutoriaResponse get solicitudTutoria =>
-      ModalRoute.of(context)!.settings.arguments as tutoriaResponse;
+  late tutoriaResponse tutoria;
+
+  bool isFinishable = false;
+
+  bool isCancellable = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    tutoria = ModalRoute.of(context)!.settings.arguments as tutoriaResponse;
+    setState(() {
+      /// Es finalizable si la fecha de la tutoria es anterior a la fecha actual
+      isFinishable = tutoria.fechaTutoria != null &&
+          DateTime.now().isAfter(tutoria.fechaTutoria!);
+
+      /// Es cancelable si la fecha de la tutoria es nula o si faltan 24 horas o más para la fecha de la tutoria
+      isCancellable = tutoria.fechaTutoria == null ||
+          DateTime.now().isBefore(tutoria.fechaTutoria!.subtract(
+            const Duration(hours: 24),
+          ));
+    });
+  }
 
   final TutorService _tutorService = TutorService();
   @override
@@ -37,7 +57,7 @@ class _TutoriaAceptadaPageState extends State<TutoriaAceptadaPage> {
               ),
               const SizedBox(height: 8),
               Text(
-                solicitudTutoria.descripcion!,
+                tutoria.descripcion!,
                 style: const TextStyle(
                   fontSize: 16,
                 ),
@@ -53,7 +73,7 @@ class _TutoriaAceptadaPageState extends State<TutoriaAceptadaPage> {
               ),
               const SizedBox(height: 8),
               Text(
-                solicitudTutoria.estudiantenombre!,
+                tutoria.estudiantenombre!,
                 style: const TextStyle(
                   fontSize: 16,
                 ),
@@ -68,9 +88,9 @@ class _TutoriaAceptadaPageState extends State<TutoriaAceptadaPage> {
               ),
               const SizedBox(height: 8),
               Text(
-                solicitudTutoria.fechaTutoria != null
+                tutoria.fechaTutoria != null
                     ? DateFormat('dd/MM/yyyy HH:mm')
-                        .format(solicitudTutoria.fechaTutoria!)
+                        .format(tutoria.fechaTutoria!)
                     : 'No definida',
                 style: const TextStyle(
                   fontSize: 16,
@@ -86,7 +106,7 @@ class _TutoriaAceptadaPageState extends State<TutoriaAceptadaPage> {
               ),
               const SizedBox(height: 8),
               Text(
-                '\$${solicitudTutoria.valorOferta}',
+                '\$${tutoria.valorOferta}',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -106,65 +126,19 @@ class _TutoriaAceptadaPageState extends State<TutoriaAceptadaPage> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          String motivo = '';
-
-                          return AlertDialog(
-                            title: const Text('Confirmar cancelación'),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                    '¿Está seguro que desea cancelar esta tutoria?'),
-                                const SizedBox(height: 10),
-                                const Text(
-                                    'Puedes agregar un motivo si lo deseas:',
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 12,
-                                    )),
-                                const SizedBox(height: 10),
-                                TextField(
-                                  onChanged: (value) => motivo = value,
-                                  decoration: const InputDecoration(
-                                    hintText: 'Escriba el motivo aquí',
-                                    border: OutlineInputBorder(),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  _tutorService
-                                      .rechazarSolicitudTutoria(
-                                          solicitudTutoria.id!, motivo)
-                                      .then((value) => {
-                                            Navigator.pushReplacementNamed(
-                                                context,
-                                                'SolicitudTutoriasList',
-                                                arguments: solicitudTutoria.id)
-                                          });
-                                },
-                                child: const Text('Confirmar'),
-                              ),
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text('Cancelar'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
+                      if (isFinishable) {
+                        _finalizarTutoria(context);
+                      } else {
+                        _cancelarTutoria(context);
+                      }
                     },
-                    //TODO: implementar logica para cancelar tutoria
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: true ? Colors.grey : Colors.red),
-                    child: const Text('Cancelar'),
+                        backgroundColor: isCancellable
+                            ? Colors.red
+                            : isFinishable
+                                ? Colors.green
+                                : Colors.grey),
+                    child: Text(isFinishable ? 'finalizar' : 'Cancelar'),
                   ),
                 ],
               ),
@@ -172,6 +146,90 @@ class _TutoriaAceptadaPageState extends State<TutoriaAceptadaPage> {
           ),
         ),
       ),
+    );
+  }
+
+  /// Muestra un dialogo de confirmación para cancelar la tutoria y un campo de texto para agregar un motivo.
+  /// Si el usuario confirma, se finaliza la tutoria
+  /// TODO: agregar logica para cancelar la tutoria
+  Future<dynamic> _cancelarTutoria(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String motivo = '';
+
+        return AlertDialog(
+          title: const Text('Confirmar cancelación'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('¿Está seguro que desea cancelar esta tutoria?'),
+              const SizedBox(height: 10),
+              const Text('Puedes agregar un motivo si lo deseas:',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 12,
+                  )),
+              const SizedBox(height: 10),
+              TextField(
+                onChanged: (value) => motivo = value,
+                decoration: const InputDecoration(
+                  hintText: 'Escriba el motivo aquí',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _tutorService
+                    .rechazarSolicitudTutoria(tutoria.id!, motivo)
+                    .then((value) => {
+                          Navigator.pushReplacementNamed(
+                              context, 'SolicitudTutoriasList',
+                              arguments: tutoria.id)
+                        });
+              },
+              child: const Text('Confirmar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancelar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Muestra un dialogo de confirmación para finalizar la tutoria
+  /// Si el usuario confirma, se finaliza la tutoria y se redirige al menu del tutor
+  /// Si el usuario cancela, se cierra el dialogo
+  Future<dynamic> _finalizarTutoria(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmar finalización'),
+          content: const Text('¿Está seguro que desea finalizar esta tutoria?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _tutorService.finalizarTutoria(tutoria.id!).then((value) =>
+                    {Navigator.pushReplacementNamed(context, 'TutorMenuPage')});
+              },
+              child: const Text('Confirmar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancelar'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

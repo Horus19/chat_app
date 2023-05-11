@@ -64,6 +64,8 @@ class _TutorMenuPageState extends State<TutorMenuPage> {
             Icons.history,
             () {
               // Lógica para la opción "Historial de tutorías"
+              Navigator.pushReplacementNamed(context, 'TutoriasFinalizadasList',
+                  arguments: _tutorService.tutor.id);
             },
           ),
           _buildMenuItem(

@@ -4,6 +4,7 @@ import 'package:chat_app/models/solicitudTutoriaDto.dart';
 import 'package:http/http.dart' as http;
 import '../environment.dart';
 import '../models/tutorDTO.dart';
+import '../models/tutoriaResponse.dart';
 import 'auth_service.dart';
 
 class EstudianteService {
@@ -74,6 +75,95 @@ class EstudianteService {
       }
     } catch (e) {
       throw Exception('Error al solicitar la tutoria: $e');
+    }
+  }
+
+  /// Metodo para obtener todas las solicitudes de tutorias pendientes de un estudiante
+  /// [idEstudiante] es el id del estudiante que se va a enviar en la petición
+  Future<List<tutoriaResponse>> getAllTutoringRequestsByStudent(
+      String idEstudiante) async {
+    try {
+      final token = await AuthService.getToken();
+      final resp = await http.get(
+        Uri.parse(
+            '${Environment.coreBack}tutoria/estudiante/$idEstudiante/pendientes'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (resp.statusCode != 200) {
+        throw http.ClientException(
+            'Error al obtener las solicitudes de tutorias');
+      }
+
+      final List<dynamic> solicitudesJson = json.decode(resp.body);
+      final List<tutoriaResponse> solicitudes = solicitudesJson
+          .map((json) => tutoriaResponse.fromJson(json))
+          .toList();
+      return solicitudes;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Metodo para obtener todas las solicitudes de tutorias aceptadas de un estudiante
+  /// [idEstudiante] es el id del estudiante que se va a enviar en la petición
+  Future<List<tutoriaResponse>> getAllacceptedTutoringByStudent(
+      String idEstudiante) async {
+    try {
+      final token = await AuthService.getToken();
+      final resp = await http.get(
+        Uri.parse(
+            '${Environment.coreBack}tutoria/estudiante/$idEstudiante/activas'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (resp.statusCode != 200) {
+        throw http.ClientException(
+            'Error al obtener las solicitudes de tutorias');
+      }
+
+      final List<dynamic> solicitudesJson = json.decode(resp.body);
+      final List<tutoriaResponse> solicitudes = solicitudesJson
+          .map((json) => tutoriaResponse.fromJson(json))
+          .toList();
+      return solicitudes;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Metodo para obtener todoas las tutorias finalizadas de un estudiante
+  /// [idEstudiante] es el id del estudiante que se va a enviar en la petición
+  Future<List<tutoriaResponse>> getAllCompletedTutoringByStudent(
+      String idEstudiante) async {
+    try {
+      final token = await AuthService.getToken();
+      final resp = await http.get(
+        Uri.parse(
+            '${Environment.coreBack}tutoria/estudiante/$idEstudiante/finalizadas'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (resp.statusCode != 200) {
+        throw http.ClientException('Error al obtener las tutorias finalizadas');
+      }
+
+      final List<dynamic> solicitudesJson = json.decode(resp.body);
+      final List<tutoriaResponse> solicitudes = solicitudesJson
+          .map((json) => tutoriaResponse.fromJson(json))
+          .toList();
+      return solicitudes;
+    } catch (e) {
+      rethrow;
     }
   }
 }

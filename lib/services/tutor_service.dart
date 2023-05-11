@@ -167,7 +167,7 @@ class TutorService with ChangeNotifier {
         'materias': tutor.materias,
         'costo': tutor.costo,
       };
-      final resp = await http.patch(Uri.parse('${Environment.coreBack}tutor'),
+      await http.patch(Uri.parse('${Environment.coreBack}tutor'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $token',
@@ -178,6 +178,54 @@ class TutorService with ChangeNotifier {
       // if (resp.statusCode != 200) {
       //   throw http.ClientException('Error al obtener las tutorias activas');
       // }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Metodo para finalizar una tutoria
+  /// [idTutoria] id de la tutoria a finalizar
+  Future<void> finalizarTutoria(String idTutoria) async {
+    try {
+      final token = await AuthService.getToken();
+      final resp = await http.get(
+        Uri.parse('${Environment.coreBack}tutoria/finalizar/$idTutoria'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (resp.statusCode != 200) {
+        throw http.ClientException('Error al finalizar la tutoria');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  ///Metodo para obtener las tutorias finalizadas por id de tutor
+  ///[idTutor] es el id del tutor
+  Future<List<tutoriaResponse>> getAllCompletedTutoringByTutor(
+      String idTutor) async {
+    try {
+      final token = await AuthService.getToken();
+      final resp = await http.get(
+        Uri.parse('${Environment.coreBack}tutoria/tutor/$idTutor/finalizadas'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (resp.statusCode != 200) {
+        throw http.ClientException('Error al obtener las tutorias finalizadas');
+      }
+
+      final List<dynamic> solicitudesJson = json.decode(resp.body);
+      final List<tutoriaResponse> solicitudes = solicitudesJson
+          .map((json) => tutoriaResponse.fromJson(json))
+          .toList();
+      return solicitudes;
     } catch (e) {
       rethrow;
     }
