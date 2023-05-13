@@ -3,6 +3,9 @@ import 'package:chat_app/services/tutor_service.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
+import '../models/reviewResponse.dart';
+import '../services/review_service.dart';
+
 class TutorDetailPage extends StatefulWidget {
   const TutorDetailPage({Key? key}) : super(key: key);
 
@@ -12,25 +15,7 @@ class TutorDetailPage extends StatefulWidget {
 
 class _TutorDetailPageState extends State<TutorDetailPage> {
   TutorDto get tutor => ModalRoute.of(context)!.settings.arguments as TutorDto;
-
-  final List<Map<String, dynamic>> reviews = [
-    {
-      'name': 'John Doe',
-      'review': 'Excelente tutor, muy paciente y dedicado',
-      'rating': 4.5,
-    },
-    {
-      'name': 'Jane Smith',
-      'review': 'Muy buen tutor, me ayudó mucho con mi examen',
-      'rating': 5.0,
-    },
-    {
-      'name': 'Bob Johnson',
-      'review': 'No recomiendo a este tutor, no tiene paciencia',
-      'rating': 2.0,
-    },
-  ];
-
+  ReviewService _reviewService = ReviewService();
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -101,7 +86,7 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                           ),
                         ),
                         Text(
-                          '${tutor.costo!}',
+                          tutor.costo!,
                           style: const TextStyle(
                             fontSize: 16.0,
                           ),
@@ -120,7 +105,7 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                           ),
                         ),
                         Text(
-                          '${tutor.calificacion!}',
+                          tutor.calificacion!,
                           style: const TextStyle(
                             fontSize: 16.0,
                           ),
@@ -135,99 +120,140 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                         fontSize: 16.0,
                       ),
                     ),
-
-                    /// Carrusel de reviews
-                    CarouselSlider(
-                      options: CarouselOptions(height: 200.0),
-                      items: reviews.map((review) {
-                        return Builder(
-                          builder: (BuildContext context) {
-                            return Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      review['name'],
-                                      style: const TextStyle(
-                                        fontSize: 18.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                    Text(
-                                      review['review'],
-                                      style: const TextStyle(fontSize: 16.0),
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.star,
-                                          color: Colors.yellow,
-                                        ),
-                                        const SizedBox(width: 8.0),
-                                        Text(
-                                          review['rating'].toString(),
-                                          style:
-                                              const TextStyle(fontSize: 16.0),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      }).toList(),
-                    ),
+                    _createReviewsCarousel(),
                   ],
                 ),
               ),
             ),
           ],
         ),
-        bottomNavigationBar: BottomAppBar(
-          elevation: 0,
-          color: Colors.grey[200],
-          child: SizedBox(
-            height: 70,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Container(
-                width: double.infinity,
-                height: 50.0,
-                decoration: BoxDecoration(
-                  // borderRadius: BorderRadius.circular(25.0),
+        bottomNavigationBar: _createRequestButton(context),
+      ),
+    );
+  }
+
+  /// Crea el botón para solicitar tutoría
+  BottomAppBar _createRequestButton(BuildContext context) {
+    return BottomAppBar(
+      elevation: 0,
+      color: Colors.grey[200],
+      child: SizedBox(
+        height: 70,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Container(
+            width: double.infinity,
+            height: 50.0,
+            decoration: BoxDecoration(
+              // borderRadius: BorderRadius.circular(25.0),
+              color: Colors.white,
+              border: Border.all(
+                color: Colors.blue,
+                width: 2,
+              ),
+            ),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, 'SolicitudTutoriaScreen',
+                    arguments: tutor);
+              },
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue,
+              ),
+              child: const Text(
+                'Solicitar tutoría',
+                style: TextStyle(
                   color: Colors.white,
-                  border: Border.all(
-                    color: Colors.blue,
-                    width: 2,
-                  ),
-                ),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, 'SolicitudTutoriaScreen',
-                        arguments: tutor);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.blue,
-                  ),
-                  child: const Text(
-                    'Solicitar tutoría',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  /// Crea el carrusel de reviews
+  /// [reviews] Lista de reviews a mostrar
+  FutureBuilder<List<ReviewResponse>> _createReviewsCarousel() {
+    return FutureBuilder<List<ReviewResponse>>(
+      future: _reviewService.getReviewsByTutor(tutor.id ?? ''),
+      builder:
+          (BuildContext context, AsyncSnapshot<List<ReviewResponse>> snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        final reviews = snapshot.data;
+        if (reviews == null) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        return CarouselSlider(
+          options: CarouselOptions(height: 200.0, enableInfiniteScroll: false),
+          items: reviews.map((review) {
+            return _createReviewCard(review);
+          }).toList(),
+        );
+      },
+    );
+  }
+
+  /// Crea tarjeta de review
+  /// [review] Review a mostrar
+  Card _createReviewCard(ReviewResponse review) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 2.0,
+              spreadRadius: 1.0,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${review.estudiante}',
+              style: const TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8.0),
+            Row(
+              children: [
+                const Icon(
+                  Icons.star,
+                  color: Colors.yellow,
+                ),
+                const SizedBox(width: 8.0),
+                Text(
+                  '${review.calificacion}',
+                  style: const TextStyle(fontSize: 16.0),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16.0),
+            Text(
+              '${review.comentario}',
+              style: const TextStyle(fontSize: 16.0, color: Colors.grey),
+            ),
+          ],
         ),
       ),
     );
