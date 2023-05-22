@@ -21,7 +21,7 @@ class _StudentMenuPageState extends State<StudentMenuPage> {
     AuthService.getUsuario().then((Usuario? usuario) {
       setState(() {
         _usuario = usuario!;
-        _isTutor = usuario.roles!.contains('tutor');
+        _isTutor = usuario.roles.contains('tutor');
       });
     });
   }

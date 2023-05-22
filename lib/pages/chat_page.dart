@@ -1,3 +1,4 @@
+import 'package:chat_app/models/message.dart';
 import 'package:chat_app/services/auth_service.dart';
 import 'package:chat_app/services/chat_service.dart';
 import 'package:chat_app/widgets/chat_message.dart';
@@ -30,6 +31,8 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     chatService = Provider.of<ChatService>(context, listen: false);
     socketService = Provider.of<SocketService>(context, listen: false);
     authService = Provider.of<AuthService>(context, listen: false);
+
+    _loadHistory(chatService.idUsuarioPara);
 
     socketService.socket.on('mensaje-personal', _listenMessage);
     _focusNode.addListener(() {
@@ -157,5 +160,19 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       _messages.insert(0, message);
     });
     message.animationController.forward();
+  }
+
+  Future<void> _loadHistory(uid) async {
+    List<Message> chat = await chatService.getChat(uid);
+    final history = chat.map((m) => ChatMessage(
+          texto: m.mensaje!,
+          uid: m.uuid!,
+          animationController: AnimationController(
+              vsync: this, duration: const Duration(milliseconds: 0))
+            ..forward(),
+        ));
+    setState(() {
+      _messages.insertAll(0, history);
+    });
   }
 }
