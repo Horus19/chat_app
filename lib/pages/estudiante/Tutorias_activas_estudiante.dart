@@ -23,7 +23,7 @@ class _TutoriasAceptadasEstudianteState
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, 'StudentMenuPage');
+            Navigator.pop(context);
           },
         ),
       ),
@@ -53,7 +53,7 @@ class _TutoriasAceptadasEstudianteState
                         /// Navigate to the details page
                         Navigator.pushNamed(
                           context,
-                          'TutoriaAceptadaPage',
+                          'TutoriaAceptadaEstudiante',
                           arguments: solicitud,
                         );
                       },

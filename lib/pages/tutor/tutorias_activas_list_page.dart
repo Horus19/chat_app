@@ -27,7 +27,7 @@ class _SolicitudTutoriasListState extends State<TutoriasActivasList> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, 'TutorMenuPage');
+            Navigator.pop(context);
           },
         ),
       ),

@@ -1,6 +1,8 @@
 import 'package:chat_app/routes/routes.dart';
 import 'package:chat_app/services/auth_service.dart';
+import 'package:chat_app/services/chat_service.dart';
 import 'package:chat_app/services/materia_service.dart';
+import 'package:chat_app/services/socket_service.dart';
 import 'package:chat_app/services/tutor_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -24,6 +26,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => MateriaService()),
         ChangeNotifierProvider(create: (_) => TutorService()),
+        ChangeNotifierProvider(create: (_) => SocketService()),
+        ChangeNotifierProvider(create: (_) => ChatService()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

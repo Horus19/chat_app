@@ -192,6 +192,7 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
             child: CircularProgressIndicator(),
           );
         }
+        if (reviews.isEmpty) return const Text('EL tutor no tiene reviews');
         return CarouselSlider(
           options: CarouselOptions(height: 200.0, enableInfiniteScroll: false),
           items: reviews.map((review) {

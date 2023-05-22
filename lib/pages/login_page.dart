@@ -2,6 +2,7 @@ import 'package:chat_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../services/socket_service.dart';
 import '../services/tutor_service.dart';
 
 class LoginPage extends StatelessWidget {
@@ -198,6 +199,11 @@ class __FormState extends State<_Form> {
                         ),
                       );
                     } else {
+                      final socketService =
+                          // ignore: use_build_context_synchronously
+                          Provider.of<SocketService>(context, listen: false);
+                      socketService.connect();
+
                       if (loginOk.roles!.contains('tutor')) {
                         await tutorService.getTutorByUserId(loginOk.id!);
                         // ignore: use_build_context_synchronously

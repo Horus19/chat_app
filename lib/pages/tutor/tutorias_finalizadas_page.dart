@@ -25,7 +25,7 @@ class _TutoriasFinalizadasListState extends State<TutoriasFinalizadasList> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, 'TutorMenuPage');
+            Navigator.pop(context);
           },
         ),
       ),
@@ -55,7 +55,7 @@ class _TutoriasFinalizadasListState extends State<TutoriasFinalizadasList> {
                         /// Navigate to the details page
                         Navigator.pushNamed(
                           context,
-                          'TutoriaAceptadaPage',
+                          'TutoriaFinalizadaTutor',
                           arguments: solicitud,
                         );
                       },

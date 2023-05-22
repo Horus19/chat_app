@@ -39,8 +39,7 @@ class _RolSelectionPageState extends State<RolSelectionPage> {
                           const BoxConstraints(maxWidth: 200, maxHeight: 150),
                       child: ElevatedButton(
                         onPressed: () async {
-                          Navigator.pushReplacementNamed(
-                              context, 'StudentMenuPage');
+                          Navigator.pushNamed(context, 'StudentMenuPage');
                           // Lógica para el rol de estudiante
                         },
                         child: Column(
@@ -62,8 +61,7 @@ class _RolSelectionPageState extends State<RolSelectionPage> {
                       child: ElevatedButton(
                         onPressed: () async {
                           // ignore: use_build_context_synchronously
-                          Navigator.pushReplacementNamed(
-                              context, 'TutorMenuPage');
+                          Navigator.pushNamed(context, 'TutorMenuPage');
                           // Lógica para el rol de tutor
                         },
                         child: Column(

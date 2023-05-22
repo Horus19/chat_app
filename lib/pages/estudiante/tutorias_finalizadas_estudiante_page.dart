@@ -26,7 +26,7 @@ class _TutoriasFinalizadasEstudianteState
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, 'StudentMenuPage');
+            Navigator.pop(context);
           },
         ),
       ),
@@ -56,7 +56,7 @@ class _TutoriasFinalizadasEstudianteState
                         /// Navigate to the details page
                         Navigator.pushNamed(
                           context,
-                          'TutoriaAceptadaPage',
+                          'TutoriaFinalizadaEstudiante',
                           arguments: solicitud,
                         );
                       },

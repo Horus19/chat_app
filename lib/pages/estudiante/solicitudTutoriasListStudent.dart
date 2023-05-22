@@ -25,7 +25,7 @@ class _SolicitudTutoriasListStudentState
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, 'StudentMenuPage');
+            Navigator.pop(context);
           },
         ),
       ),
@@ -52,55 +52,13 @@ class _SolicitudTutoriasListStudentState
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                     child: GestureDetector(
                       onTap: () {
-                        /// TODO: Ir a pantalla de solicitud como estudiante
                         Navigator.pushNamed(
                           context,
-                          'SolicitudTutoriaDetails',
+                          'SolicitudTutoriaDetalleEstudiante',
                           arguments: solicitud,
                         );
                       },
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${solicitud.descripcion!.split(' ').take(10).join(' ')}...',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    solicitud.tutorNombre!,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  Text(
-                                    '\$${solicitud.valorOferta}',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.green,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      child: _createCardSolicitud(solicitud),
                     ),
                   );
                 },
@@ -108,6 +66,50 @@ class _SolicitudTutoriasListStudentState
             }
           }
         },
+      ),
+    );
+  }
+
+  Card _createCardSolicitud(tutoriaResponse solicitud) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${solicitud.descripcion!.split(' ').take(10).join(' ')}...',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  solicitud.tutorNombre!,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+                Text(
+                  '\$${solicitud.valorOferta}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

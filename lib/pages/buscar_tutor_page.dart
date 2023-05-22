@@ -25,7 +25,7 @@ class _TutorSearchScreenState extends State<TutorSearchScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, 'StudentMenuPage');
+            Navigator.pop(context);
           },
         ),
       ),

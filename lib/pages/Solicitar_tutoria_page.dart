@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -179,15 +181,25 @@ class _SolicitudTutoriaScreenState extends State<SolicitudTutoriaScreen> {
                         _estudianteService
                             .solicitarTutoria(_solicitudTutoriaDto)
                             .then((value) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                  'La solicitud de tutoría ha sido enviada'),
-                              backgroundColor: Colors.blue,
-                            ),
-                          );
-                          Navigator.pushReplacementNamed(
-                              context, "StudentMenuPage");
+                          if (value.statusCode == 201) {
+                            Navigator.pushReplacementNamed(
+                                context, "StudentMenuPage");
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'La solicitud de tutoría ha sido enviada'),
+                                backgroundColor: Colors.blue,
+                              ),
+                            );
+                          } else {
+                            var obj = jsonDecode(value.body);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(obj['error'] ?? ''),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
                         });
                       }
                     },

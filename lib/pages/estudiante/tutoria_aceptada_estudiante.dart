@@ -1,24 +1,30 @@
+import 'package:chat_app/models/CancelarTutoriaRequest.dart';
+import 'package:chat_app/services/chat_service.dart';
+import 'package:chat_app/services/tutor_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/tutoriaResponse.dart';
-import '../../services/chat_service.dart';
-import '../../services/tutor_service.dart';
+import '../../models/userByTutorID.dart';
+import '../../services/estudiante_service.dart';
 
-class TutoriaAceptadaPage extends StatefulWidget {
-  const TutoriaAceptadaPage({super.key});
+class TutoriaAceptadaEstudiante extends StatefulWidget {
+  const TutoriaAceptadaEstudiante({super.key});
 
   @override
-  State<TutoriaAceptadaPage> createState() => _TutoriaAceptadaPageState();
+  State<TutoriaAceptadaEstudiante> createState() =>
+      _TutoriaAceptadaEstudianteState();
 }
 
-class _TutoriaAceptadaPageState extends State<TutoriaAceptadaPage> {
+class _TutoriaAceptadaEstudianteState extends State<TutoriaAceptadaEstudiante> {
   late tutoriaResponse tutoria;
 
   bool isFinishable = false;
 
   bool isCancellable = false;
+
+  late UserByTutorId usuarioTutor;
 
   @override
   void didChangeDependencies() {
@@ -34,15 +40,19 @@ class _TutoriaAceptadaPageState extends State<TutoriaAceptadaPage> {
           DateTime.now().isBefore(tutoria.fechaTutoria!.subtract(
             const Duration(hours: 24),
           ));
+      final tutorService = Provider.of<TutorService>(context, listen: false);
+
+      tutorService.getUserByTutor(tutoria.tutorId!).then((value) => {
+            usuarioTutor = value,
+          });
     });
   }
 
-  final TutorService _tutorService = TutorService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detalles de la tutoría'),
+        title: const Text('Detalles de la tutoría - estudiante'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -67,7 +77,7 @@ class _TutoriaAceptadaPageState extends State<TutoriaAceptadaPage> {
               ),
               const SizedBox(height: 16),
               const Text(
-                'Estudiante:',
+                'Tutor:',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -75,7 +85,7 @@ class _TutoriaAceptadaPageState extends State<TutoriaAceptadaPage> {
               ),
               const SizedBox(height: 8),
               Text(
-                tutoria.estudiantenombre!,
+                tutoria.tutorNombre!,
                 style: const TextStyle(
                   fontSize: 16,
                 ),
@@ -120,29 +130,22 @@ class _TutoriaAceptadaPageState extends State<TutoriaAceptadaPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       final chatService =
                           Provider.of<ChatService>(context, listen: false);
-                      chatService.idUsuarioPara = tutoria.estudianteId!;
-                      Navigator.pushReplacementNamed(context, 'Chat');
+                      chatService.idUsuarioPara = usuarioTutor.id!;
+                      Navigator.pushNamed(context, 'Chat');
                     },
                     child: const Text('Ir al chat'),
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      if (isFinishable) {
-                        _finalizarTutoria(context);
-                      } else {
-                        _cancelarTutoria(context);
-                      }
+                      _cancelarTutoria(context);
                     },
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: isCancellable
-                            ? Colors.red
-                            : isFinishable
-                                ? Colors.green
-                                : Colors.grey),
-                    child: Text(isFinishable ? 'finalizar' : 'Cancelar'),
+                        backgroundColor:
+                            isCancellable ? Colors.red : Colors.grey),
+                    child: const Text('Cancelar'),
                   ),
                 ],
               ),
@@ -155,6 +158,7 @@ class _TutoriaAceptadaPageState extends State<TutoriaAceptadaPage> {
 
   /// Muestra un dialogo de confirmación para cancelar la tutoria y un campo de texto para agregar un motivo.
   /// Si el usuario confirma, se finaliza la tutoria
+  /// TODO: agregar logica para cancelar la tutoria
   Future<dynamic> _cancelarTutoria(BuildContext context) {
     return showDialog(
       context: context,
@@ -169,7 +173,7 @@ class _TutoriaAceptadaPageState extends State<TutoriaAceptadaPage> {
             children: [
               const Text('¿Está seguro que desea cancelar esta tutoria?'),
               const SizedBox(height: 10),
-              const Text('Puedes agregar un motivo si lo deseas:',
+              const Text('Agregue el motivo:',
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     color: Colors.grey,
@@ -177,6 +181,7 @@ class _TutoriaAceptadaPageState extends State<TutoriaAceptadaPage> {
                   )),
               const SizedBox(height: 10),
               TextField(
+                maxLines: 3,
                 onChanged: (value) => motivo = value,
                 decoration: const InputDecoration(
                   hintText: 'Escriba el motivo aquí',
@@ -188,41 +193,13 @@ class _TutoriaAceptadaPageState extends State<TutoriaAceptadaPage> {
           actions: [
             TextButton(
               onPressed: () {
-                _tutorService
-                    .rechazarSolicitudTutoria(tutoria.id!, motivo)
-                    .then((value) => {
-                          Navigator.pushReplacementNamed(
-                              context, 'SolicitudTutoriasList',
-                              arguments: tutoria.id)
-                        });
-              },
-              child: const Text('Confirmar'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancelar'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  /// Muestra un dialogo de confirmación para finalizar la tutoria
-  /// Si el usuario confirma, se finaliza la tutoria y se redirige al menu del tutor
-  /// Si el usuario cancela, se cierra el dialogo
-  Future<dynamic> _finalizarTutoria(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirmar finalización'),
-          content: const Text('¿Está seguro que desea finalizar esta tutoria?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                _tutorService.finalizarTutoria(tutoria.id!).then((value) =>
-                    {Navigator.pushReplacementNamed(context, 'TutorMenuPage')});
+                EstudianteService estudianteService = EstudianteService();
+                CancelarTutoriaRequest request = CancelarTutoriaRequest(
+                  tutoriaId: tutoria.id!,
+                  descripcion: motivo,
+                );
+                estudianteService.cancelarTutoria(request);
+                Navigator.pushReplacementNamed(context, 'StudentMenuPage');
               },
               child: const Text('Confirmar'),
             ),

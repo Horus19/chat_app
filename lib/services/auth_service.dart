@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import '../models/login_response.dart';
 import '../models/register_response.dart';
 import '../models/usuario.dart';
+import '../pages/estudiante/models/changePassword.dto.dart';
 
 class AuthService with ChangeNotifier {
   late Usuario usuario;
@@ -84,7 +85,7 @@ class AuthService with ChangeNotifier {
             token: loginResponse.token!,
             roles: loginResponse.roles!);
         _storage.write(key: 'usuario', value: jsonEncode(usuario.toJson()));
-        this.usuario = usuario;
+        usuario = usuario;
         await _guardarToken(loginResponse.token!);
       }
       autenticando = false;
@@ -152,5 +153,38 @@ class AuthService with ChangeNotifier {
   Future logout() async {
     await _storage.delete(key: 'usuario');
     return await _storage.delete(key: 'token');
+  }
+
+  /// Metodo para enviar correo con nueva contraseña
+  /// [email] es el correo del usuario
+  Future<void> forgotPassword(String email) async {
+    try {
+      await http.patch(
+        Uri.parse('${Environment.authBack}/forgot-password/$email'),
+        headers: {'Content-Type': 'application/json'},
+      );
+    } catch (e) {
+      throw Exception('Error en la función forgotPassword: $e');
+    }
+  }
+
+  /// Metodo para cambiar la contraseña
+  /// [ChangePasswordDto] es el objeto que contiene la contraseña actual y la nueva contraseña
+  Future<http.Response> changePassword(
+      ChangePasswordDto changePasswordDto) async {
+    try {
+      final token = await AuthService.getToken();
+      final resp = await http.post(
+        Uri.parse('${Environment.authBack}/cambiar-contrasena'),
+        body: jsonEncode(changePasswordDto.toJson()),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      return resp;
+    } catch (e) {
+      throw Exception('Error en la función changePassword: $e');
+    }
   }
 }

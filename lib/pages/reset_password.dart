@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../services/auth_service.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({Key? key}) : super(key: key);
@@ -88,7 +91,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               ),
                             );
                           } else {
-                            //TODO: Agregar lógica para manejar el envío de correo electrónico para reestablecer la contraseña
+                            final authService = Provider.of<AuthService>(
+                                context,
+                                listen: false);
+                            authService.forgotPassword(emailController.text);
                             setState(() {
                               isSent = true;
                             });

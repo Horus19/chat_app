@@ -174,7 +174,7 @@ class _ActivarPerfilTutorScreenState extends State<ActivarPerfilTutorScreen> {
                         });
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.blue,
+                        backgroundColor: Colors.blue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),

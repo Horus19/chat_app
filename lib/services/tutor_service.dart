@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import '../models/CrearPerfilTutorDto.dart';
 import '../models/tutorDTO.dart';
 import '../models/tutoriaResponse.dart';
+import '../models/userByTutorID.dart';
 import 'auth_service.dart';
 
 class TutorService with ChangeNotifier {
@@ -238,5 +239,27 @@ class TutorService with ChangeNotifier {
     final tutorJson = await storage.read(key: 'tutor');
     final TutorDto tutor = TutorDto.fromJson(jsonDecode(tutorJson!));
     return tutor;
+  }
+
+  /// Metodo para obtener un usuario por su id de tutor
+  /// [idTutor] id del tutor
+  /// Retorna un objeto de tipo [UserByTutorId]
+  Future<UserByTutorId> getUserByTutor(String idTutor) async {
+    try {
+      final resp = await http.get(
+        Uri.parse('${Environment.coreBack}tutor/userByTutorID/$idTutor'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+      if (resp.statusCode != 200) {
+        throw http.ClientException('Error al obtener el usuario');
+      }
+      final userJson = json.decode(resp.body);
+      final UserByTutorId user = UserByTutorId.fromJson(userJson);
+      return user;
+    } catch (e) {
+      rethrow;
+    }
   }
 }

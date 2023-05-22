@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:chat_app/models/solicitudTutoriaDto.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import '../environment.dart';
 import '../models/tutorDTO.dart';
 import '../models/tutoriaResponse.dart';
+import '../models/CancelarTutoriaRequest.dart';
 import 'auth_service.dart';
 
 class EstudianteService {
@@ -59,7 +61,8 @@ class EstudianteService {
 
   /// Metodo para realizar una solicitud de tutoria
   /// [solicitudTutoriaDto] es el objeto que se va a enviar en la petición
-  Future<void> solicitarTutoria(SolicitudTutoriaDto solicitudTutoriaDto) async {
+  Future<Response> solicitarTutoria(
+      SolicitudTutoriaDto solicitudTutoriaDto) async {
     try {
       final token = await AuthService.getToken();
       final response = await http.post(
@@ -70,9 +73,7 @@ class EstudianteService {
         },
         body: json.encode(solicitudTutoriaDto.toJson()),
       );
-      if (response.statusCode != 201) {
-        throw http.ClientException('Error al solicitar la tutoria');
-      }
+      return response;
     } catch (e) {
       throw Exception('Error al solicitar la tutoria: $e');
     }
@@ -162,6 +163,49 @@ class EstudianteService {
           .map((json) => tutoriaResponse.fromJson(json))
           .toList();
       return solicitudes;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Metodo para cancelar una solicitud de tutoria
+  /// [idSolicitud] es el id de la solicitud que se va a enviar en la petición
+  Future<void> cancelarSolicitud(String idSolicitud) async {
+    try {
+      final token = await AuthService.getToken();
+      final resp = await http.get(
+        Uri.parse(
+            '${Environment.coreBack}tutoria/cancelar-solicitud/$idSolicitud'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (resp.statusCode != 200) {
+        throw http.ClientException('Error al cancelar la solicitud');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Metodo para cancelar una tutoria
+  /// [CancelarTutoriaRequest] es el objeto que se va a enviar en la petición
+  Future<void> cancelarTutoria(
+      CancelarTutoriaRequest cancelarTutoriaRequest) async {
+    try {
+      final token = await AuthService.getToken();
+      final resp = await http.patch(
+        Uri.parse('${Environment.coreBack}tutoria/cancelar'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode(cancelarTutoriaRequest.toJson()),
+      );
+      if (resp.statusCode != 200) {
+        throw http.ClientException('Error al cancelar la tutoria');
+      }
     } catch (e) {
       rethrow;
     }

@@ -12,14 +12,13 @@ class ReviewService {
   /// [reviewRequest] es el objeto que se envia en la peticion http
   Future<http.Response> createReview(ReviewRequest reviewRequest) async {
     try {
-      final response = await http.post(
-        Uri.parse('${Environment.coreBack}/review'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $AuthService.getToken()',
-        },
-        body: reviewRequest.toJson(),
-      );
+      final response =
+          await http.post(Uri.parse('${Environment.coreBack}review'),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer $AuthService.getToken()',
+              },
+              body: json.encode(reviewRequest.toJson()));
       if (response.statusCode != 201) {
         throw Exception('Error al crear la review');
       }

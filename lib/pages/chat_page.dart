@@ -1,5 +1,10 @@
+import 'package:chat_app/services/auth_service.dart';
+import 'package:chat_app/services/chat_service.dart';
 import 'package:chat_app/widgets/chat_message.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../services/socket_service.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key});
@@ -13,7 +18,27 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   final FocusNode _focusNode = FocusNode();
   bool _isWriting = false;
 
+  late ChatService chatService;
+  late SocketService socketService;
+  late AuthService authService;
+
   final List<ChatMessage> _messages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    chatService = Provider.of<ChatService>(context, listen: false);
+    socketService = Provider.of<SocketService>(context, listen: false);
+    authService = Provider.of<AuthService>(context, listen: false);
+
+    socketService.socket.on('mensaje-personal', _listenMessage);
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus) {
+        // Hide sticker when keyboard appear
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -26,7 +51,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                 // Acción al presionar el botón de regreso
               },
             ),
-            title: const Text("Chat page")),
+            title: const Text("Conversación")),
         body: Container(
           padding: const EdgeInsets.all(10),
           child: Column(children: [
@@ -93,7 +118,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     if (texto.isEmpty) return;
     final newMessage = ChatMessage(
       texto: texto,
-      uid: '123',
+      uid: authService.usuario.id,
       animationController: AnimationController(
           vsync: this, duration: const Duration(milliseconds: 400)),
     );
@@ -101,6 +126,11 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     newMessage.animationController.forward();
     setState(() {
       _isWriting = false;
+    });
+    socketService.socket.emit('mensaje-personal', {
+      'de': authService.usuario.id,
+      'para': chatService.idUsuarioPara,
+      'mensaje': texto
     });
     _textController.clear();
     _focusNode.requestFocus();
@@ -112,6 +142,20 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     for (var element in _messages) {
       element.animationController.dispose();
     }
+    socketService.socket.off('mensaje-personal');
     super.dispose();
+  }
+
+  _listenMessage(data) {
+    ChatMessage message = ChatMessage(
+      texto: data['mensaje'],
+      uid: data['de'],
+      animationController: AnimationController(
+          vsync: this, duration: const Duration(milliseconds: 400)),
+    );
+    setState(() {
+      _messages.insert(0, message);
+    });
+    message.animationController.forward();
   }
 }

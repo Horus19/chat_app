@@ -1,6 +1,5 @@
 import 'package:chat_app/models/usuario.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../services/auth_service.dart';
 import '../services/tutor_service.dart';
@@ -22,7 +21,7 @@ class _StudentMenuPageState extends State<StudentMenuPage> {
     AuthService.getUsuario().then((Usuario? usuario) {
       setState(() {
         _usuario = usuario!;
-        _isTutor = usuario.roles.contains('tutor');
+        _isTutor = usuario.roles!.contains('tutor');
       });
     });
   }
@@ -45,7 +44,7 @@ class _StudentMenuPageState extends State<StudentMenuPage> {
             'Buscar tutor',
             Icons.search,
             () {
-              Navigator.pushReplacementNamed(context, 'TutorSearchScreen');
+              Navigator.pushNamed(context, 'TutorSearchScreen');
               // Lógica para la opción "Buscar tutor"
             },
           ),
@@ -55,8 +54,7 @@ class _StudentMenuPageState extends State<StudentMenuPage> {
             Icons.pending,
             () {
               // Lógica para la opción "Solicitudes de tutorías"
-              Navigator.pushReplacementNamed(
-                  context, 'SolicitudTutoriasListStudent',
+              Navigator.pushNamed(context, 'SolicitudTutoriasListStudent',
                   arguments: _usuario.id);
             },
           ),
@@ -66,8 +64,7 @@ class _StudentMenuPageState extends State<StudentMenuPage> {
             Icons.pending_actions,
             () {
               // Lógica para la opción "Tutorías activas"
-              Navigator.pushReplacementNamed(
-                  context, 'TutoriasActivasEstudiante',
+              Navigator.pushNamed(context, 'TutoriasActivasEstudiante',
                   arguments: _usuario.id);
             },
           ),
@@ -77,8 +74,7 @@ class _StudentMenuPageState extends State<StudentMenuPage> {
             Icons.history,
             () {
               // Lógica para la opción "Historial de tutorías"
-              Navigator.pushReplacementNamed(
-                  context, 'TutoriasFinalizadasEstudiante',
+              Navigator.pushNamed(context, 'TutoriasFinalizadasEstudiante',
                   arguments: _usuario.id);
             },
           ),
@@ -89,11 +85,19 @@ class _StudentMenuPageState extends State<StudentMenuPage> {
             () async {
               if (_isTutor) {
                 // ignore: use_build_context_synchronously
-                Navigator.pushReplacementNamed(context, 'TutorMenuPage');
+                Navigator.pushNamed(context, 'TutorMenuPage');
               } else {
-                Navigator.pushReplacementNamed(
-                    context, 'ActivateTutorProfileScreen');
+                Navigator.pushNamed(context, 'ActivateTutorProfileScreen');
               }
+            },
+          ),
+          _buildMenuItem(
+            context,
+            'Cambiar contraseña',
+            Icons.lock,
+            () {
+              // Navigator.pushReplacementNamed(context, 'ChangePasswordScreen');
+              Navigator.pushNamed(context, 'ChangePasswordScreen');
             },
           ),
           _buildMenuItem(

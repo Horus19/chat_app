@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../services/auth_service.dart';
+import '../services/socket_service.dart';
 import '../services/tutor_service.dart';
 
 class TutorMenuPage extends StatefulWidget {
@@ -35,7 +36,7 @@ class _TutorMenuPageState extends State<TutorMenuPage> {
             Icons.manage_accounts,
             () {
               // Lógica para la opción "Gestionar perfil"
-              Navigator.pushReplacementNamed(context, 'TutorProfileScreen',
+              Navigator.pushNamed(context, 'TutorProfileScreen',
                   arguments: _tutorService.tutor);
             },
           ),
@@ -44,7 +45,7 @@ class _TutorMenuPageState extends State<TutorMenuPage> {
             'Solicitudes de tutorías',
             Icons.pending,
             () {
-              Navigator.pushReplacementNamed(context, 'SolicitudTutoriasList',
+              Navigator.pushNamed(context, 'SolicitudTutoriasList',
                   arguments: _tutorService.tutor.id);
             },
           ),
@@ -54,7 +55,7 @@ class _TutorMenuPageState extends State<TutorMenuPage> {
             Icons.pending_actions,
             () {
               // Lógica para la opción "Tutorías activas"
-              Navigator.pushReplacementNamed(context, 'TutoriasActivasList',
+              Navigator.pushNamed(context, 'TutoriasActivasList',
                   arguments: _tutorService.tutor.id);
             },
           ),
@@ -64,7 +65,7 @@ class _TutorMenuPageState extends State<TutorMenuPage> {
             Icons.history,
             () {
               // Lógica para la opción "Historial de tutorías"
-              Navigator.pushReplacementNamed(context, 'TutoriasFinalizadasList',
+              Navigator.pushNamed(context, 'TutoriasFinalizadasList',
                   arguments: _tutorService.tutor.id);
             },
           ),
@@ -73,7 +74,7 @@ class _TutorMenuPageState extends State<TutorMenuPage> {
             'Ir a perfil de estudiante',
             Icons.person_pin,
             () {
-              Navigator.pushReplacementNamed(context, 'StudentMenuPage');
+              Navigator.pushNamed(context, 'StudentMenuPage');
             },
           ),
           _buildMenuItem(
