@@ -150,6 +150,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             ))
                           }
                       })
+                  // ignore: body_might_complete_normally_catch_error
                   .catchError((error) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(error.toString()),

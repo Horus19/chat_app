@@ -1,4 +1,5 @@
 import 'package:chat_app/services/auth_service.dart';
+import 'package:chat_app/services/notification_servide.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,12 +11,12 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return const SafeArea(
       child: Scaffold(
           resizeToAvoidBottomInset: true,
           body: SingleChildScrollView(
             child: Column(
-              children: const [
+              children: [
                 _Logo(),
                 _Form(),
                 _Label(),
@@ -36,8 +37,8 @@ class _Logo extends StatelessWidget {
         child: Container(
       margin: const EdgeInsets.only(top: 30),
       width: 170,
-      child: Column(
-        children: const [
+      child: const Column(
+        children: [
           Image(
             image: AssetImage('assets/user.png'),
           ),
@@ -202,7 +203,10 @@ class __FormState extends State<_Form> {
                       final socketService =
                           // ignore: use_build_context_synchronously
                           Provider.of<SocketService>(context, listen: false);
-                      socketService.connect();
+
+                      await socketService.connect();
+
+                      socketService.subscribeToNotifications(loginOk.id!);
 
                       if (loginOk.roles!.contains('tutor')) {
                         await tutorService.getTutorByUserId(loginOk.id!);
@@ -253,7 +257,7 @@ class _Label extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.pushReplacementNamed(context, 'Register');
+              Navigator.pushNamed(context, 'Register');
             },
             child: const Text(
               'Crea una ahora!',

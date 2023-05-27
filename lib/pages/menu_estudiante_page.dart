@@ -1,8 +1,10 @@
 import 'package:chat_app/models/usuario.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../services/auth_service.dart';
-import '../services/tutor_service.dart';
+import '../services/notification_servide.dart';
+import '../services/socket_service.dart';
 
 class StudentMenuPage extends StatefulWidget {
   const StudentMenuPage({Key? key}) : super(key: key);
@@ -12,12 +14,16 @@ class StudentMenuPage extends StatefulWidget {
 }
 
 class _StudentMenuPageState extends State<StudentMenuPage> {
-  final TutorService _tutorService = TutorService();
   late bool _isTutor = false;
   late Usuario _usuario;
+  late SocketService socketService;
+  late NotificationService notificationService;
   @override
   void initState() {
     super.initState();
+    notificationService =
+        Provider.of<NotificationService>(context, listen: false);
+    socketService = Provider.of<SocketService>(context, listen: false);
     AuthService.getUsuario().then((Usuario? usuario) {
       setState(() {
         _usuario = usuario!;
@@ -54,6 +60,7 @@ class _StudentMenuPageState extends State<StudentMenuPage> {
             Icons.pending,
             () {
               // Lógica para la opción "Solicitudes de tutorías"
+
               Navigator.pushNamed(context, 'SolicitudTutoriasListStudent',
                   arguments: _usuario.id);
             },

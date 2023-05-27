@@ -39,7 +39,6 @@ class ReviewService {
           'Authorization': 'Bearer $AuthService.getToken()',
         },
       );
-      print(response.body);
       if (response.statusCode != 200) {
         throw Exception('Error al obtener reviews');
       }

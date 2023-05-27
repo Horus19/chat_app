@@ -1,8 +1,9 @@
-import 'package:chat_app/models/tutorDTO.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../models/usuario.dart';
 import '../services/auth_service.dart';
+import '../services/notification_servide.dart';
 import '../services/socket_service.dart';
 import '../services/tutor_service.dart';
 
@@ -14,10 +15,36 @@ class TutorMenuPage extends StatefulWidget {
 }
 
 class _TutorMenuPageState extends State<TutorMenuPage> {
+  late SocketService socketService;
+  late NotificationService notificationService;
+
+  @override
+  void initState() {
+    super.initState();
+    notificationService =
+        Provider.of<NotificationService>(context, listen: false);
+    socketService = Provider.of<SocketService>(context, listen: false);
+    AuthService.getUsuario().then((Usuario? usuario) {
+      socketService.socket.on('notifications:${usuario!.id}', (data) {
+        print('Notificación recibida');
+        notificationService.showNotification();
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     /// Inicializar el servicio de tutor
     final _tutorService = Provider.of<TutorService>(context);
+
+    final socketService = Provider.of<SocketService>(context);
+    final notificationService =
+        Provider.of<NotificationService>(context, listen: false);
+    // Escucha el evento de notificación del socket
+    socketService.socket.on('notification', (data) {
+      // Muestra la notificación cuando se recibe una notificación del servidor
+      notificationService.showNotification();
+    });
 
     return Scaffold(
       appBar: AppBar(

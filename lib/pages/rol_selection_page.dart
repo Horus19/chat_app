@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../services/socket_service.dart';
 
 class RolSelectionPage extends StatefulWidget {
   const RolSelectionPage({Key? key}) : super(key: key);
@@ -8,6 +13,19 @@ class RolSelectionPage extends StatefulWidget {
 }
 
 class _RolSelectionPageState extends State<RolSelectionPage> {
+  late SocketService socketService;
+
+  @override
+  void initState() {
+    super.initState();
+    socketService = Provider.of<SocketService>(context, listen: false);
+    socketService.connect();
+    socketService.socket
+        .on('notifications:bb2eec1a-1f9a-43ee-8c71-e4e8bde1193a', (_) {
+      print('Notificación recibida');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,9 +60,9 @@ class _RolSelectionPageState extends State<RolSelectionPage> {
                           Navigator.pushNamed(context, 'StudentMenuPage');
                           // Lógica para el rol de estudiante
                         },
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             Icon(Icons.school, size: 50),
                             SizedBox(height: 10),
                             Text('Estudiante', style: TextStyle(fontSize: 20)),
@@ -64,9 +82,9 @@ class _RolSelectionPageState extends State<RolSelectionPage> {
                           Navigator.pushNamed(context, 'TutorMenuPage');
                           // Lógica para el rol de tutor
                         },
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             Icon(Icons.person, size: 50),
                             SizedBox(height: 10),
                             Text('Tutor', style: TextStyle(fontSize: 20)),

@@ -15,7 +15,7 @@ class SocketService with ChangeNotifier {
   ServerStatus _serverStatus = ServerStatus.Connecting;
 
 //http://10.0.2.2:3001
-  void connect() async {
+  Future<bool> connect() async {
     final token = await AuthService.getToken();
     _socket = IO.io(Environment.socketUrl, {
       'transports': ['websocket'],
@@ -36,11 +36,26 @@ class SocketService with ChangeNotifier {
           _serverStatus = ServerStatus.Offline,
           notifyListeners(),
         });
+
+    /// Retorna true si se conecto correctamente
+    return _socket.connected;
   }
 
   void disconnect() {
     print('disconnect');
     _socket.disconnect();
+  }
+
+  ///Se suscribe a las notificaciones de un usuario
+  ///[id] es el id del usuario
+  ///[callback] es la funcion que se ejecuta cuando se recibe una notificacion
+  void subscribeToNotifications(String id) {
+    print('notifications:$id');
+    _socket.on(
+        'notifications:$id',
+        (data) => {
+              print('notificacion recibida'),
+            });
   }
 
   ServerStatus get serverStatus => _serverStatus;

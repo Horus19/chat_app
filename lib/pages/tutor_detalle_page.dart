@@ -1,5 +1,4 @@
 import 'package:chat_app/models/tutorDTO.dart';
-import 'package:chat_app/services/tutor_service.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
