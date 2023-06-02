@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService with ChangeNotifier {
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  static FlutterLocalNotificationsPlugin flutterLocalNotificationsPluginStatic =
+      FlutterLocalNotificationsPlugin();
 
-  NotificationService(this.flutterLocalNotificationsPlugin);
+  NotificationService(
+      FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) {
+    flutterLocalNotificationsPluginStatic = flutterLocalNotificationsPlugin;
+  }
 
   /// Atributo de id de notificacion
   /// Se utiliza para identificar la notificacion
@@ -22,7 +26,7 @@ class NotificationService with ChangeNotifier {
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
-    await flutterLocalNotificationsPlugin.show(
+    await flutterLocalNotificationsPluginStatic.show(
       _idNotification, // ID de la notificación
       'Tutoria rechazada',
       'Detalle del rechazo... abcdefghijklmnopqrstuvwxyz',
@@ -32,6 +36,24 @@ class NotificationService with ChangeNotifier {
     _idNotification++;
   }
 
-  /// Muestra una notificación con un mensaje personalizado
-  ///
+  ///Metodo estatico que muestra una notificacion
+  static Future<void> showNotificationStatic() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'channel_id',
+      'channel_name',
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: false,
+    );
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPluginStatic.show(
+      0, // ID de la notificación
+      'Tutoria rechazada',
+      'Detalle del rechazo... abcdefghijklmnopqrstuvwxyz',
+      platformChannelSpecifics,
+    );
+  }
 }

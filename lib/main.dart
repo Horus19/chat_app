@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:ui';
+
 import 'package:chat_app/routes/routes.dart';
 import 'package:chat_app/services/auth_service.dart';
 import 'package:chat_app/services/chat_service.dart';
@@ -6,23 +9,12 @@ import 'package:chat_app/services/notification_servide.dart';
 import 'package:chat_app/services/socket_service.dart';
 import 'package:chat_app/services/tutor_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-class ReceivedNotification {
-  ReceivedNotification({
-    required this.id,
-    required this.title,
-    required this.body,
-    required this.payload,
-  });
-
-  final int id;
-  final String? title;
-  final String? body;
-  final String? payload;
-}
+import 'package:flutter_background_service_android/flutter_background_service_android.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Inicializa el objeto FlutterLocalNotificationsPlugin
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -43,8 +35,70 @@ void main() async {
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   // Run your app
+  // await initializeService();
+
   runApp(const MyApp());
 }
+
+// Future<void> initializeService() async {
+//   final service = FlutterBackgroundService();
+//   await service.configure(
+//     androidConfiguration: AndroidConfiguration(
+//       onStart: onStart,
+//       autoStart: true,
+//       isForegroundMode: true,
+//     ),
+//     iosConfiguration: IosConfiguration(
+//       autoStart: true,
+//       onForeground: onStart,
+//       onBackground: onIosBackground,
+//     ),
+//   );
+//   service.startService();
+// }
+
+// Future<bool> onIosBackground(ServiceInstance service) async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   DartPluginRegistrant.ensureInitialized();
+
+//   SharedPreferences preferences = await SharedPreferences.getInstance();
+//   await preferences.reload();
+//   final log = preferences.getStringList('log') ?? <String>[];
+//   log.add(DateTime.now().toIso8601String());
+//   await preferences.setStringList('log', log);
+
+//   return true;
+// }
+
+// onStart(ServiceInstance service) async {
+//   DartPluginRegistrant.ensureInitialized();
+//   if (service is AndroidServiceInstance) {
+//     service.on('setAsForeground').listen((event) {
+//       service.setAsForegroundService();
+//     });
+//     service.on('setAsBackground').listen((event) {
+//       service.setAsBackgroundService();
+//     });
+//   }
+//   service.on('stopService').listen((event) {
+//     service.stopSelf();
+//   });
+
+//   Timer.periodic(const Duration(seconds: 10), (timer) async {
+//     if (service is AndroidServiceInstance) {
+//       service.setForegroundNotificationInfo(
+//         title: "App in background...",
+//         content: "Update ${DateTime.now()}",
+//       );
+//     }
+//     service.invoke(
+//       'update',
+//       {
+//         "current_date": DateTime.now().toIso8601String(),
+//       },
+//     );
+//   });
+// }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

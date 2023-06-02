@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,10 +18,6 @@ class _RolSelectionPageState extends State<RolSelectionPage> {
     super.initState();
     socketService = Provider.of<SocketService>(context, listen: false);
     socketService.connect();
-    socketService.socket
-        .on('notifications:bb2eec1a-1f9a-43ee-8c71-e4e8bde1193a', (_) {
-      print('Notificación recibida');
-    });
   }
 
   @override

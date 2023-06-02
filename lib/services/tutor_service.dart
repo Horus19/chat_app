@@ -31,6 +31,9 @@ class TutorService with ChangeNotifier {
     if (response.statusCode != 201) {
       throw Exception('Error al crear perfil de tutor');
     }
+    final Map<String, dynamic> tutorJson = json.decode(response.body);
+    tutor = TutorDto();
+    tutor.id = tutorJson['id'];
   }
 
   ///Metodo para obtener las solicitudes de tutorias por id de tutor

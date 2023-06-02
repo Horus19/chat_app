@@ -163,6 +163,12 @@ class __FormState extends State<_Form> {
                 if (value.length < 6) {
                   return 'La contraseña debe tener al menos 6 caracteres';
                 }
+                // Valida que la contrasenia tenga al menos un numero, una letra mayuscula y una minuscula
+                String pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
+                RegExp regExp = RegExp(pattern);
+                if (!regExp.hasMatch(value)) {
+                  return 'La contraseña debe tener al menos un numero, una letra mayuscula y una minuscula';
+                }
                 // Si todo está bien, retornar null
                 return null;
               },

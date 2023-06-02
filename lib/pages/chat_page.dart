@@ -139,9 +139,9 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     _focusNode.requestFocus();
   }
 
+  /// Función para cerrar el socket cuando se cierra la página
   @override
   void dispose() {
-    //TODO: Off del socket
     for (var element in _messages) {
       element.animationController.dispose();
     }
@@ -149,6 +149,8 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  /// Función para escuchar los mensajes
+  /// [data] es el mensaje que se recibe
   _listenMessage(data) {
     ChatMessage message = ChatMessage(
       texto: data['mensaje'],
@@ -162,6 +164,8 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     message.animationController.forward();
   }
 
+  /// Función para cargar el historial de mensajes
+  /// [uid] es el id del usuario con el que se está chateando
   Future<void> _loadHistory(uid) async {
     List<Message> chat = await chatService.getChat(uid);
     final history = chat.map((m) => ChatMessage(
